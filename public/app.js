@@ -1,222 +1,240 @@
 /**
- * GRIP by Truvad - Frontend Multi-Step Widget Engine & Edge-Case Handler
+ * GRIP by Truvad - Clean White Theme Interactive Engine
  */
 
 document.addEventListener('DOMContentLoaded', () => {
-  // ------------------------------------------------------------------
-  // State Variables
-  // ------------------------------------------------------------------
-  let currentStep = 1;
-  let userEmail = '';
-  let userPreferences = { rbi: true, sebi: true, sec: false };
-  let otpTimerInterval = null;
-  let resendTimerInterval = null;
-  let selectedRating = 5;
-
-  // DOM Elements
+  // DOM References
   const mockModeBanner = document.getElementById('mockModeBanner');
-  const statusText = document.getElementById('statusText');
-
-  const stepPanes = {
-    1: document.getElementById('step1Pane'),
-    2: document.getElementById('step2Pane'),
-    3: document.getElementById('step3Pane'),
-  };
-
-  // Step 1 Elements
-  const step1Form = document.getElementById('step1Form');
+  const regionTabs = document.querySelectorAll('.region-tab');
+  const searchInput = document.getElementById('searchInput');
+  const btnSelectAll = document.getElementById('btnSelectAll');
+  const btnClearAll = document.getElementById('btnClearAll');
+  const selectedCountText = document.getElementById('selectedCountText');
+  const regulatorCards = document.querySelectorAll('.regulator-card');
+  const cadenceBtns = document.querySelectorAll('.cadence-btn');
+  
+  const subscribeForm = document.getElementById('subscribeForm');
   const emailInput = document.getElementById('emailInput');
   const emailError = document.getElementById('emailError');
-  const chipRbi = document.getElementById('chipRbi');
-  const chipSebi = document.getElementById('chipSebi');
-  const chipSec = document.getElementById('chipSec');
-  const btnSendOtp = document.getElementById('btnSendOtp');
-  const btnSendOtpText = document.getElementById('btnSendOtpText');
+  const btnActivate = document.getElementById('btnActivate');
 
-  // Step 2 Elements
-  const step2Form = document.getElementById('step2Form');
+  const otpModal = document.getElementById('otpModal');
+  const btnCloseModal = document.getElementById('btnCloseModal');
+  const otpForm = document.getElementById('otpForm');
+  const otpModalNotice = document.getElementById('otpModalNotice');
+  const otpError = document.getElementById('otpError');
+  const timerCountdown = document.getElementById('timerCountdown');
+  const btnResendOtp = document.getElementById('btnResendOtp');
+  const btnVerify = document.getElementById('btnVerify');
+
   const otpBoxes = [
     document.getElementById('otpBox0'),
     document.getElementById('otpBox1'),
     document.getElementById('otpBox2'),
     document.getElementById('otpBox3'),
   ];
-  const otpBoxesContainer = document.getElementById('otpBoxesContainer');
-  const otpError = document.getElementById('otpError');
-  const timerCountdown = document.getElementById('timerCountdown');
-  const btnResendOtp = document.getElementById('btnResendOtp');
-  const btnBackToStep1 = document.getElementById('btnBackToStep1');
-  const btnVerifyOtp = document.getElementById('btnVerifyOtp');
-  const otpSentNotice = document.getElementById('otpSentNotice');
 
-  // Step 3 Elements
-  const matchedUpdatesGrid = document.getElementById('matchedUpdatesGrid');
+  const matchedSection = document.getElementById('matchedSection');
+  const matchedGrid = document.getElementById('matchedGrid');
   const feedbackCard = document.getElementById('feedbackCard');
-  const feedbackForm = document.getElementById('feedbackForm');
   const starBtns = document.querySelectorAll('.star-btn');
   const feedbackMsg = document.getElementById('feedbackMsg');
+  const btnSubmitFeedback = document.getElementById('btnSubmitFeedback');
   const btnMaybeLater = document.getElementById('btnMaybeLater');
   const toastContainer = document.getElementById('toastContainer');
 
+  // State
+  let userEmail = '';
+  let selectedRating = 5;
+  let otpTimerInterval = null;
+  let resendTimerInterval = null;
+
   // ------------------------------------------------------------------
-  // 1. Health Check & Mock Mode Banner Initialization
+  // 1. Health Check
   // ------------------------------------------------------------------
-  async function checkServerHealth() {
+  async function checkHealth() {
     try {
       const res = await fetch('/api/health');
       const data = await res.json();
-
-      if (data.status === 'ok') {
-        if (data.mailerMode === 'outbox-mock') {
-          if (mockModeBanner) mockModeBanner.style.display = 'flex';
-          if (statusText) statusText.textContent = 'Mock Outbox Mode';
-        } else {
-          if (mockModeBanner) mockModeBanner.style.display = 'none';
-          if (statusText) statusText.textContent = 'Resend API Active';
-        }
+      if (data.status === 'ok' && data.mailerMode === 'outbox-mock') {
+        if (mockModeBanner) mockModeBanner.style.display = 'flex';
       }
-    } catch (err) {
-      if (statusText) statusText.textContent = 'Offline';
-    }
+    } catch (err) {}
   }
 
   // ------------------------------------------------------------------
-  // Helper: Toast Notifications System
+  // 2. Toast Notifications
   // ------------------------------------------------------------------
   function showToast(message, type = 'success') {
     const toast = document.createElement('div');
     toast.className = `toast ${type}`;
-    toast.setAttribute('role', 'alert');
     toast.innerHTML = `
       <span>${type === 'success' ? '✅' : '⚠️'}</span>
       <span>${message}</span>
     `;
     toastContainer.appendChild(toast);
-
     setTimeout(() => {
       toast.style.opacity = '0';
-      toast.style.transform = 'translateY(10px)';
       setTimeout(() => toast.remove(), 300);
     }, 4000);
   }
 
   // ------------------------------------------------------------------
-  // Step Navigation Helper
+  // 3. Regulator Card Selection & Counter
   // ------------------------------------------------------------------
-  function switchStep(stepNumber) {
-    currentStep = stepNumber;
-    Object.keys(stepPanes).forEach(stepKey => {
-      const pane = stepPanes[stepKey];
-      if (Number(stepKey) === stepNumber) {
-        pane.classList.add('active');
-      } else {
-        pane.classList.remove('active');
-      }
+  function updateSelectedCount() {
+    const selected = document.querySelectorAll('.regulator-card.selected');
+    selectedCountText.textContent = `${selected.length} regulators selected`;
+  }
+
+  regulatorCards.forEach(card => {
+    card.addEventListener('click', () => {
+      card.classList.toggle('selected');
+      updateSelectedCount();
     });
-
-    if (stepNumber === 2) {
-      setTimeout(() => otpBoxes[0].focus(), 100);
-    } else if (stepNumber === 3) {
-      const step3Heading = document.getElementById('step3Heading');
-      if (step3Heading) step3Heading.focus();
-    }
-  }
-
-  // ------------------------------------------------------------------
-  // Step 1: Live Email Validation & Submit
-  // ------------------------------------------------------------------
-  function validateEmailFormat(email) {
-    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return regex.test(email.trim());
-  }
-
-  emailInput.addEventListener('input', () => {
-    const val = emailInput.value.trim();
-    if (!val) {
-      emailInput.classList.remove('invalid');
-      emailError.textContent = '';
-    } else if (!validateEmailFormat(val)) {
-      emailInput.classList.add('invalid');
-      emailError.textContent = 'Please enter a valid work email address.';
-    } else {
-      emailInput.classList.remove('invalid');
-      emailError.textContent = '';
-    }
   });
 
-  step1Form.addEventListener('submit', async (e) => {
+  // ------------------------------------------------------------------
+  // 4. Region Tabs Filtering
+  // ------------------------------------------------------------------
+  regionTabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      regionTabs.forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+
+      const region = tab.getAttribute('data-region');
+      filterRegulators();
+    });
+  });
+
+  function filterRegulators() {
+    const activeTab = document.querySelector('.region-tab.active');
+    const regionFilter = activeTab ? activeTab.getAttribute('data-region') : 'all';
+    const query = searchInput.value.toLowerCase().trim();
+
+    regulatorCards.forEach(card => {
+      const cardRegion = card.getAttribute('data-region');
+      const cardCode = card.getAttribute('data-code').toLowerCase();
+      const cardContent = card.textContent.toLowerCase();
+
+      let matchesRegion = regionFilter === 'all' || cardRegion === regionFilter;
+      let matchesSearch = !query || cardContent.includes(query) || cardCode.includes(query);
+
+      if (matchesRegion && matchesSearch) {
+        card.style.display = 'block';
+      } else {
+        card.style.display = 'none';
+      }
+    });
+  }
+
+  searchInput.addEventListener('input', filterRegulators);
+
+  // Quick Select All / Clear
+  btnSelectAll.addEventListener('click', () => {
+    regulatorCards.forEach(card => {
+      if (card.style.display !== 'none') {
+        card.classList.add('selected');
+      }
+    });
+    updateSelectedCount();
+  });
+
+  btnClearAll.addEventListener('click', () => {
+    regulatorCards.forEach(card => card.classList.remove('selected'));
+    updateSelectedCount();
+  });
+
+  // Cadence selection
+  cadenceBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      cadenceBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+    });
+  });
+
+  // ------------------------------------------------------------------
+  // 5. Subscription & OTP Verification Modal
+  // ------------------------------------------------------------------
+  function getSelectedPreferences() {
+    const selected = document.querySelectorAll('.regulator-card.selected');
+    const prefs = {};
+    selected.forEach(c => {
+      const code = c.getAttribute('data-code');
+      prefs[code] = true;
+    });
+    return prefs;
+  }
+
+  subscribeForm.addEventListener('submit', async (e) => {
     e.preventDefault();
     const email = emailInput.value.trim();
 
-    if (!validateEmailFormat(email)) {
-      emailInput.classList.add('invalid');
-      emailError.textContent = 'A valid work email address is required.';
-      emailInput.focus();
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      emailError.textContent = 'Please enter a valid work email address.';
       return;
     }
-
+    emailError.textContent = '';
     userEmail = email.toLowerCase();
-    userPreferences = {
-      rbi: chipRbi.checked,
-      sebi: chipSebi.checked,
-      sec: chipSec.checked,
-    };
 
-    // Double-submit prevention: disable button
-    btnSendOtp.disabled = true;
-    btnSendOtpText.textContent = 'Processing...';
+    btnActivate.disabled = true;
+    btnActivate.textContent = 'Processing...';
 
     try {
+      const prefs = getSelectedPreferences();
       const res = await fetch('/api/otp/send', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: userEmail, preferences: userPreferences }),
+        body: JSON.stringify({ email: userEmail, preferences: prefs }),
       });
 
       const data = await res.json();
 
-      // Case A: Email is ALREADY VERIFIED -> Skip OTP step & go straight to Step 3!
       if (data.success && data.alreadyVerified) {
-        showToast(data.message || 'Welcome back! Preferences updated.', 'success');
-        loadMatchedUpdates(userPreferences);
-        switchStep(3);
+        showToast('Welcome back! Preferences updated.', 'success');
+        loadMatchedUpdates(prefs);
+        matchedSection.classList.add('active');
+        matchedSection.scrollIntoView({ behavior: 'smooth' });
         return;
       }
 
-      // Case B: OTP dispatched -> proceed to Step 2
       if (data.success) {
-        showToast(data.message || 'OTP code sent successfully.', 'success');
+        showToast('OTP verification code dispatched.', 'success');
         
-        let noticeText = `Enter the 4-digit verification code sent to ${userEmail}.`;
+        let notice = `Enter 4-digit verification code sent to ${userEmail}.`;
         if (data.mockOtpCode) {
-          noticeText += ` (Dev Mock Code: ${data.mockOtpCode})`;
+          notice += ` (Mock Code: ${data.mockOtpCode})`;
         }
-        otpSentNotice.textContent = noticeText;
+        otpModalNotice.textContent = notice;
 
         startOtpTimers(data.ttlSeconds || 300);
-        switchStep(2);
+        otpModal.classList.add('active');
+        setTimeout(() => otpBoxes[0].focus(), 100);
       } else {
-        showToast(data.error || 'Failed to send OTP code.', 'error');
-        emailError.textContent = data.error || 'Failed to send OTP code.';
+        emailError.textContent = data.error || 'Failed to send verification code.';
       }
     } catch (err) {
-      showToast('Network error. Failed to reach server.', 'error');
-      emailError.textContent = 'Network failure. Please check your internet connection.';
+      emailError.textContent = 'Network failure. Please check your connection.';
     } finally {
-      // Re-enable button
-      btnSendOtp.disabled = false;
-      btnSendOtpText.textContent = 'Send Verification OTP';
+      btnActivate.disabled = false;
+      btnActivate.textContent = 'Activate Personalized Alerts ↗';
     }
   });
 
+  // Modal Close
+  btnCloseModal.addEventListener('click', () => {
+    otpModal.classList.remove('active');
+    clearInterval(otpTimerInterval);
+    clearInterval(resendTimerInterval);
+  });
+
   // ------------------------------------------------------------------
-  // Step 2: 4-Box OTP Input (Auto-Advance, Backspace, Paste)
+  // 6. 4-Box OTP Input Mechanics
   // ------------------------------------------------------------------
   otpBoxes.forEach((box, index) => {
     box.addEventListener('input', () => {
       const val = box.value.replace(/\D/g, '');
       box.value = val;
-
       if (val && index < 3) {
         otpBoxes[index + 1].focus();
       }
@@ -224,267 +242,202 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     box.addEventListener('keydown', (e) => {
-      if (e.key === 'Backspace') {
-        if (!box.value && index > 0) {
-          otpBoxes[index - 1].focus();
-        }
+      if (e.key === 'Backspace' && !box.value && index > 0) {
+        otpBoxes[index - 1].focus();
       }
     });
   });
 
-  // Handle Paste Support across OTP boxes
-  otpBoxesContainer.addEventListener('paste', (e) => {
+  // Paste Support
+  document.getElementById('otpBoxesContainer').addEventListener('paste', (e) => {
     e.preventDefault();
-    const pastedText = (e.clipboardData || window.clipboardData).getData('text');
-    const digits = pastedText.replace(/\D/g, '').slice(0, 4);
+    const pasted = (e.clipboardData || window.clipboardData).getData('text');
+    const digits = pasted.replace(/\D/g, '').slice(0, 4);
 
-    digits.split('').forEach((digit, i) => {
-      if (otpBoxes[i]) {
-        otpBoxes[i].value = digit;
-      }
+    digits.split('').forEach((d, i) => {
+      if (otpBoxes[i]) otpBoxes[i].value = d;
     });
 
     if (digits.length > 0) {
-      const lastIndex = Math.min(digits.length - 1, 3);
-      otpBoxes[lastIndex].focus();
+      const lastIdx = Math.min(digits.length - 1, 3);
+      otpBoxes[lastIdx].focus();
     }
-    otpError.textContent = '';
   });
 
-  // ------------------------------------------------------------------
-  // Step 2: Timers & Resend Handling
-  // ------------------------------------------------------------------
   function startOtpTimers(ttlSeconds = 300) {
     clearInterval(otpTimerInterval);
     clearInterval(resendTimerInterval);
 
-    let secondsLeft = ttlSeconds;
-    updateTimerDisplay(secondsLeft);
+    let left = ttlSeconds;
+    updateTimerDisplay(left);
 
     otpTimerInterval = setInterval(() => {
-      secondsLeft -= 1;
-      updateTimerDisplay(secondsLeft);
-
-      if (secondsLeft <= 0) {
+      left -= 1;
+      updateTimerDisplay(left);
+      if (left <= 0) {
         clearInterval(otpTimerInterval);
-        otpError.textContent = 'OTP code has expired. Please request a new code.';
-        btnVerifyOtp.disabled = true;
+        otpError.textContent = 'Code expired. Request a new one.';
+        btnVerify.disabled = true;
       }
     }, 1000);
 
-    // 30-Second Resend Cooldown
-    let resendCooldown = 30;
+    let resendLeft = 30;
     btnResendOtp.disabled = true;
-    btnResendOtp.textContent = `Resend OTP (${resendCooldown}s)`;
+    btnResendOtp.textContent = `Resend OTP (${resendLeft}s)`;
 
     resendTimerInterval = setInterval(() => {
-      resendCooldown -= 1;
-      if (resendCooldown <= 0) {
+      resendLeft -= 1;
+      if (resendLeft <= 0) {
         clearInterval(resendTimerInterval);
         btnResendOtp.disabled = false;
         btnResendOtp.textContent = 'Resend OTP';
       } else {
-        btnResendOtp.textContent = `Resend OTP (${resendCooldown}s)`;
+        btnResendOtp.textContent = `Resend OTP (${resendLeft}s)`;
       }
     }, 1000);
   }
 
-  function updateTimerDisplay(totalSeconds) {
-    const mins = Math.floor(Math.max(0, totalSeconds) / 60);
-    const secs = Math.max(0, totalSeconds) % 60;
+  function updateTimerDisplay(sec) {
+    const mins = Math.floor(Math.max(0, sec) / 60);
+    const secs = Math.max(0, sec) % 60;
     timerCountdown.textContent = `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
   }
 
-  // Resend OTP Click with double-submit prevention
   btnResendOtp.addEventListener('click', async () => {
     btnResendOtp.disabled = true;
     otpError.textContent = '';
-
     try {
+      const prefs = getSelectedPreferences();
       const res = await fetch('/api/otp/send', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: userEmail, preferences: userPreferences }),
+        body: JSON.stringify({ email: userEmail, preferences: prefs }),
       });
-
       const data = await res.json();
       if (data.success) {
-        showToast('A new OTP code has been dispatched.', 'success');
+        showToast('New OTP dispatched.', 'success');
         startOtpTimers(data.ttlSeconds || 300);
-        btnVerifyOtp.disabled = false;
+        btnVerify.disabled = false;
         otpBoxes.forEach(b => b.value = '');
         otpBoxes[0].focus();
-
-        if (data.mockOtpCode) {
-          otpSentNotice.textContent = `Enter 4-digit code sent to ${userEmail}. (Dev Mock Code: ${data.mockOtpCode})`;
-        }
       } else {
-        showToast(data.error || 'Failed to resend OTP.', 'error');
-        otpError.textContent = data.error || 'Failed to resend OTP.';
+        otpError.textContent = data.error || 'Failed to resend.';
       }
     } catch (err) {
-      showToast('Network error during resend.', 'error');
-      otpError.textContent = 'Network failure. Please try again.';
+      otpError.textContent = 'Network error during resend.';
     }
   });
 
-  btnBackToStep1.addEventListener('click', () => {
-    clearInterval(otpTimerInterval);
-    clearInterval(resendTimerInterval);
-    switchStep(1);
-  });
-
-  // Step 2 Form Submit (Verify OTP) with double-submit prevention & error handling
-  step2Form.addEventListener('submit', async (e) => {
+  // Verify OTP
+  otpForm.addEventListener('submit', async (e) => {
     e.preventDefault();
-    otpError.textContent = '';
-
     const code = otpBoxes.map(b => b.value.trim()).join('');
     if (code.length !== 4) {
-      otpError.textContent = 'Please enter all 4 digits of your OTP code.';
+      otpError.textContent = 'Please enter all 4 digits.';
       return;
     }
 
-    // Double-submit prevention
-    btnVerifyOtp.disabled = true;
-    btnVerifyOtp.textContent = 'Verifying...';
+    btnVerify.disabled = true;
+    btnVerify.textContent = 'Verifying...';
 
     try {
+      const prefs = getSelectedPreferences();
       const res = await fetch('/api/otp/verify', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          email: userEmail,
-          otp: code,
-          preferences: userPreferences,
-        }),
+        body: JSON.stringify({ email: userEmail, otp: code, preferences: prefs }),
       });
 
       const data = await res.json();
 
       if (data.success && data.verified) {
-        clearInterval(otpTimerInterval);
-        clearInterval(resendTimerInterval);
-        showToast('Identity verified successfully!', 'success');
-
-        loadMatchedUpdates(userPreferences);
-        switchStep(3);
+        otpModal.classList.remove('active');
+        showToast('Alerts activated successfully!', 'success');
+        
+        loadMatchedUpdates(prefs);
+        matchedSection.classList.add('active');
+        matchedSection.scrollIntoView({ behavior: 'smooth' });
       } else {
-        // Specific error handling for wrong / expired / too_many_attempts
-        const errorMsg = data.error || 'Invalid verification code.';
-        otpError.textContent = errorMsg;
-        showToast(errorMsg, 'error');
-
-        // If too many attempts or expired, clear inputs for new attempt
-        if (errorMsg.includes('invalidated') || errorMsg.includes('expired')) {
-          otpBoxes.forEach(b => b.value = '');
-          otpBoxes[0].focus();
-        }
+        otpError.textContent = data.error || 'Invalid verification code.';
       }
     } catch (err) {
-      showToast('Network failure. Connection lost.', 'error');
-      otpError.textContent = 'Network failure. Please check your internet connection.';
+      otpError.textContent = 'Network failure. Please try again.';
     } finally {
-      btnVerifyOtp.disabled = false;
-      btnVerifyOtp.textContent = 'Verify & Activate';
+      btnVerify.disabled = false;
+      btnVerify.textContent = 'Verify & Activate Alerts';
     }
   });
 
   // ------------------------------------------------------------------
-  // Step 3: Render Matched Updates & Interactive Feedback Form
+  // 7. Render Matched Directives & Feedback
   // ------------------------------------------------------------------
   async function loadMatchedUpdates(preferences) {
     try {
       const activeRegs = Object.keys(preferences).filter(k => preferences[k]);
       const paramStr = activeRegs.length > 0 ? `?regulators=${activeRegs.join(',')}` : '';
-      
+
       const res = await fetch(`/api/updates${paramStr}`);
       const data = await res.json();
 
       if (data.success && Array.isArray(data.updates)) {
-        renderMatchedUpdates(data.updates);
+        renderMatchedGrid(data.updates);
       }
-    } catch (err) {
-      console.error('Failed to load matched updates:', err);
-    }
+    } catch (err) {}
   }
 
-  function renderMatchedUpdates(updates) {
+  function renderMatchedGrid(updates) {
     if (!updates || updates.length === 0) {
-      matchedUpdatesGrid.innerHTML = `<p style="color: var(--color-text-muted);">No regulatory directives active for selected filters.</p>`;
+      matchedGrid.innerHTML = `<p style="color: var(--text-muted);">No circulars found for selected regulators.</p>`;
       return;
     }
 
-    matchedUpdatesGrid.innerHTML = updates.map(item => `
-      <div class="update-card">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-          <span style="font-size: 11px; font-weight: 800; color: var(--color-teal-bright); text-transform: uppercase;">${item.regulator}</span>
-          <span style="font-size: 11px; color: var(--color-red); font-weight: 700;">${item.severity}</span>
+    matchedGrid.innerHTML = updates.map(u => `
+      <div class="matched-card">
+        <div class="matched-card-header">
+          <span class="matched-reg-badge">${u.regulator}</span>
+          <span class="matched-sev-badge">${u.severity}</span>
         </div>
-        <h4 style="font-size: 14px; font-weight: 700; margin-bottom: 6px; color: var(--color-text-main);">${item.title}</h4>
-        <p style="font-size: 12px; color: var(--color-text-muted); line-height: 1.5;">${item.summary}</p>
+        <h4 style="font-size:15px; font-weight:700; margin-bottom:4px;">${u.title}</h4>
+        <p style="font-size:13px; color:var(--text-secondary); line-height:1.5;">${u.summary}</p>
       </div>
     `).join('');
   }
 
-  // Star Rating Selection
+  // Star Rating
   starBtns.forEach(btn => {
     btn.addEventListener('click', () => {
       selectedRating = Number(btn.getAttribute('data-rating')) || 5;
       starBtns.forEach(b => {
-        const ratingVal = Number(b.getAttribute('data-rating'));
-        if (ratingVal <= selectedRating) {
-          b.classList.add('active');
-        } else {
-          b.classList.remove('active');
-        }
+        const val = Number(b.getAttribute('data-rating'));
+        if (val <= selectedRating) b.classList.add('active');
+        else b.classList.remove('active');
       });
     });
   });
 
-  // Submit Feedback Form with double-submit prevention & verified lead check
-  feedbackForm.addEventListener('submit', async (e) => {
-    e.preventDefault();
+  btnSubmitFeedback.addEventListener('click', async () => {
     const msg = feedbackMsg.value.trim();
-
     if (!msg || msg.length < 5) {
-      showToast('Feedback message must be at least 5 characters.', 'error');
+      showToast('Please enter at least 5 characters.', 'error');
       return;
     }
-
-    const btnSubmit = document.getElementById('btnSubmitFeedback');
-    btnSubmit.disabled = true;
-    btnSubmit.textContent = 'Submitting...';
 
     try {
       const res = await fetch('/api/feedback', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          email: userEmail,
-          rating: selectedRating,
-          message: msg,
-        }),
+        body: JSON.stringify({ email: userEmail, rating: selectedRating, message: msg }),
       });
-
       const data = await res.json();
 
-      if (res.ok && data.success) {
-        showToast('Thank you for your feedback!', 'success');
-        feedbackCard.innerHTML = `
-          <div style="text-align: center; padding: 16px; color: var(--color-teal-bright); font-weight: 700;">
-            ✅ Feedback submitted successfully to the GRIP Team. Thank you!
-          </div>
-        `;
+      if (data.success) {
+        showToast('Feedback submitted. Thank you!', 'success');
+        feedbackCard.innerHTML = `<div style="text-align:center; padding:12px; color:#16a34a; font-weight:700;">✅ Feedback submitted successfully!</div>`;
       } else {
-        const errorText = data.error || 'Failed to submit feedback.';
-        showToast(errorText, 'error');
+        showToast(data.error || 'Failed to submit feedback.', 'error');
       }
     } catch (err) {
-      showToast('Network error during feedback submission.', 'error');
-    } finally {
-      btnSubmit.disabled = false;
-      btnSubmit.textContent = 'Submit Feedback';
+      showToast('Network error.', 'error');
     }
   });
 
@@ -492,6 +445,7 @@ document.addEventListener('DOMContentLoaded', () => {
     feedbackCard.style.display = 'none';
   });
 
-  // Initialize Server Health & Mock Mode Banner
-  checkServerHealth();
+  // Boot
+  checkHealth();
+  updateSelectedCount();
 });

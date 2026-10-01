@@ -3,164 +3,315 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>GRIP by Truvad - Personalized Regulatory Intelligence</title>
-  <meta name="description" content="Get personalized regulatory updates for RBI, SEBI, and SEC with zero-dependency authentication.">
+  <title>Personalized Regulatory Alerts - GRIP by Truvad</title>
+  <meta name="description" content="Select global regulatory authorities, central banks, and market regulators for personalized compliance directives.">
   <link rel="stylesheet" href="/styles.css">
 </head>
 <body>
 
-  <div class="container">
+  <!-- Top Navigation Bar -->
+  <nav class="navbar">
+    <ul class="nav-links">
+      <li><a href="#" class="nav-link">Problem</a></li>
+      <li><a href="#" class="nav-link">Coverage</a></li>
+      <li><a href="#" class="nav-link">Products</a></li>
+      <li><a href="#" class="nav-link">Pricing</a></li>
+      <li><a href="#" class="nav-link active">Personalized Alerts</a></li>
+      <li><a href="#" class="nav-link">Company</a></li>
+    </ul>
+    <div class="nav-right">
+      <a href="#" class="nav-login">Log in</a>
+      <a href="#" class="btn-get-started">Get started <span>↗</span></a>
+    </div>
+  </nav>
+
+  <!-- Hero Header Section -->
+  <header class="hero-section">
+    <div class="wand-badge">
+      <span>🪄</span>
+      <span>PERSONALIZED REGULATORY INTELLIGENCE</span>
+    </div>
+    <h1 class="hero-title">Personalized Regulatory Alerts</h1>
+    <p class="hero-subtitle">
+      Select the global authorities, central banks, and market regulators relevant to your compliance team. Receive synthesised, prioritised circulars delivered directly to your inbox.
+    </p>
+  </header>
+
+  <!-- Main Card Container -->
+  <main class="main-card">
+
+    <!-- Mock Mode Warning Banner (if offline outbox) -->
+    <div id="mockModeBanner" class="mock-mode-banner" style="display: none;">
+      <span>ℹ️</span>
+      <span><strong>Mock Mode Active:</strong> RESEND_API_KEY is not set. Verification OTPs are printed directly to the server terminal console and saved in <code>/outbox/</code>.</span>
+    </div>
     
-    <!-- Header Banner -->
-    <header class="header-banner">
-      <div>
-        <h1 class="brand-title">GRIP <span style="font-weight: 400; font-size: 16px; color: var(--color-teal-bright);">by Truvad</span></h1>
-        <p class="brand-sub">Enterprise Regulatory Intelligence Platform</p>
-      </div>
-      <div class="status-badge" id="systemStatus">
-        <span class="badge-dot"></span>
-        <span id="statusText">System Active</span>
-      </div>
-    </header>
+    <!-- Region Filter Tabs -->
+    <div class="region-tabs" id="regionTabs">
+      <button class="region-tab active" data-region="all">All</button>
+      <button class="region-tab" data-region="IN">India</button>
+      <button class="region-tab" data-region="EU">Europe</button>
+      <button class="region-tab" data-region="GB">United Kingdom</button>
+      <button class="region-tab" data-region="US">United States</button>
+      <button class="region-tab" data-region="APAC">Asia-Pacific</button>
+      <button class="region-tab" data-region="GLOBAL">Global Standards</button>
+    </div>
 
-    <!-- Main Widget Container -->
-    <main class="widget-card" id="widgetCard">
-      
-      <!-- Mock Mode Info Banner -->
-      <div id="mockModeBanner" class="mock-mode-banner" style="display: none;" role="note">
-        <span>ℹ️</span>
-        <span><strong>Mock Mode Active:</strong> RESEND_API_KEY is not set. Verification OTPs are printed directly to the server terminal console and saved in <code>/outbox/</code>.</span>
+    <!-- Filter & Search Controls Row -->
+    <div class="filter-actions-row">
+      <div class="search-input-wrapper">
+        <span class="search-icon">🔍</span>
+        <input type="text" id="searchInput" class="search-input" placeholder="Filter regulators...">
       </div>
+
+      <div class="quick-links">
+        <button type="button" id="btnSelectAll" class="quick-link-btn">Select all</button>
+        <span style="color: var(--text-light);">|</span>
+        <button type="button" id="btnClearAll" class="quick-link-btn">Clear</button>
+      </div>
+
+      <div class="selected-count-badge" id="selectedCountBadge">
+        <span>✓</span>
+        <span id="selectedCountText">5 regulators selected</span>
+      </div>
+    </div>
+
+    <!-- 12 Regulators Grid Layout -->
+    <div class="regulators-grid" id="regulatorsGrid">
       
-      <!-- STEP 1: Email & Preferences -->
-      <section class="step-pane active" id="step1Pane" aria-labelledby="step1Heading">
-        <div class="widget-header">
-          <h2 class="widget-title" id="step1Heading">Get Personalized Regulatory Updates</h2>
-          <p class="widget-subtitle">Subscribe to real-time compliance directives for RBI, SEBI, and SEC.</p>
+      <!-- 1. RBI -->
+      <div class="regulator-card selected" data-code="rbi" data-region="IN">
+        <div class="card-top-row">
+          <div class="custom-checkbox">✓</div>
+          <span class="regulator-code">RBI</span>
+          <span class="country-badge">IN</span>
         </div>
+        <div class="regulator-name">Reserve Bank of India</div>
+        <span class="topic-pill">Banking, Payments & Fintech</span>
+      </div>
 
-        <form id="step1Form" novalidate>
-          <div class="form-group">
-            <label class="form-label" for="emailInput">Work Email Address</label>
-            <input type="email" id="emailInput" class="form-input" placeholder="e.g. officer@institution.com" required aria-required="true" aria-describedby="emailError" autocomplete="email">
-            <div id="emailError" class="error-msg" aria-live="polite"></div>
+      <!-- 2. SEBI -->
+      <div class="regulator-card selected" data-code="sebi" data-region="IN">
+        <div class="card-top-row">
+          <div class="custom-checkbox">✓</div>
+          <span class="regulator-code">SEBI</span>
+          <span class="country-badge">IN</span>
+        </div>
+        <div class="regulator-name">Securities and Exchange Board of India</div>
+        <span class="topic-pill">Capital Markets & AI Disclosures</span>
+      </div>
+
+      <!-- 3. IRDAI -->
+      <div class="regulator-card" data-code="irdai" data-region="IN">
+        <div class="card-top-row">
+          <div class="custom-checkbox">✓</div>
+          <span class="regulator-code">IRDAI</span>
+          <span class="country-badge">IN</span>
+        </div>
+        <div class="regulator-name">Insurance Regulatory and Development Authority</div>
+        <span class="topic-pill">Insurtech & Solvency</span>
+      </div>
+
+      <!-- 4. IFSCA -->
+      <div class="regulator-card" data-code="ifsca" data-region="IN">
+        <div class="card-top-row">
+          <div class="custom-checkbox">✓</div>
+          <span class="regulator-code">IFSCA</span>
+          <span class="country-badge">IN</span>
+        </div>
+        <div class="regulator-name">International Financial Services Centres Authority</div>
+        <span class="topic-pill">Cross-border Banking</span>
+      </div>
+
+      <!-- 5. ECB -->
+      <div class="regulator-card selected" data-code="ecb" data-region="EU">
+        <div class="card-top-row">
+          <div class="custom-checkbox">✓</div>
+          <span class="regulator-code">ECB</span>
+          <span class="country-badge">EU</span>
+        </div>
+        <div class="regulator-name">European Central Bank</div>
+        <span class="topic-pill">Monetary Policy & SSM Banking</span>
+      </div>
+
+      <!-- 6. EBA -->
+      <div class="regulator-card" data-code="eba" data-region="EU">
+        <div class="card-top-row">
+          <div class="custom-checkbox">✓</div>
+          <span class="regulator-code">EBA</span>
+          <span class="country-badge">EU</span>
+        </div>
+        <div class="regulator-name">European Banking Authority</div>
+        <span class="topic-pill">DORA & Prudential Standards</span>
+      </div>
+
+      <!-- 7. ESMA -->
+      <div class="regulator-card" data-code="esma" data-region="EU">
+        <div class="card-top-row">
+          <div class="custom-checkbox">✓</div>
+          <span class="regulator-code">ESMA</span>
+          <span class="country-badge">EU</span>
+        </div>
+        <div class="regulator-name">European Securities and Markets Authority</div>
+        <span class="topic-pill">MiFID & Algorithmic Trading</span>
+      </div>
+
+      <!-- 8. BaFin -->
+      <div class="regulator-card" data-code="bafin" data-region="DE">
+        <div class="card-top-row">
+          <div class="custom-checkbox">✓</div>
+          <span class="regulator-code">BaFin</span>
+          <span class="country-badge">DE</span>
+        </div>
+        <div class="regulator-name">Federal Financial Supervisory Authority (Germany)</div>
+        <span class="topic-pill">ICT Risk & Cyber Governance</span>
+      </div>
+
+      <!-- 9. BE / BOE -->
+      <div class="regulator-card selected" data-code="boe" data-region="GB">
+        <div class="card-top-row">
+          <div class="custom-checkbox">✓</div>
+          <span class="regulator-code">BE / BOE</span>
+          <span class="country-badge">GB</span>
+        </div>
+        <div class="regulator-name">Bank of England (Court of Directors & MPC)</div>
+        <span class="topic-pill">Financial Stability & DLT</span>
+      </div>
+
+      <!-- 10. PRA -->
+      <div class="regulator-card" data-code="pra" data-region="GB">
+        <div class="card-top-row">
+          <div class="custom-checkbox">✓</div>
+          <span class="regulator-code">PRA</span>
+          <span class="country-badge">GB</span>
+        </div>
+        <div class="regulator-name">Prudential Regulation Authority</div>
+        <span class="topic-pill">Capital Adequacy & Basel 3.1</span>
+      </div>
+
+      <!-- 11. FCA -->
+      <div class="regulator-card" data-code="fca" data-region="GB">
+        <div class="card-top-row">
+          <div class="custom-checkbox">✓</div>
+          <span class="regulator-code">FCA</span>
+          <span class="country-badge">GB</span>
+        </div>
+        <div class="regulator-name">Financial Conduct Authority</div>
+        <span class="topic-pill">Consumer Duty & AI Principles</span>
+      </div>
+
+      <!-- 12. SEC -->
+      <div class="regulator-card selected" data-code="sec" data-region="US">
+        <div class="card-top-row">
+          <div class="custom-checkbox">✓</div>
+          <span class="regulator-code">SEC</span>
+          <span class="country-badge">US</span>
+        </div>
+        <div class="regulator-name">Securities and Exchange Commission</div>
+        <span class="topic-pill">Form 8-K Cyber & AI Governance</span>
+      </div>
+
+    </div>
+
+    <!-- Alert Delivery Cadence Section -->
+    <div class="cadence-box">
+      <span class="cadence-label">ALERT DELIVERY CADENCE</span>
+      <div class="cadence-options">
+        <button type="button" class="cadence-btn active" data-cadence="realtime">
+          <span>⚡</span> Real-Time Breaking Circulars
+        </button>
+        <button type="button" class="cadence-btn" data-cadence="daily">
+          <span>🗓️</span> Daily Executive Digest (08:00 UTC)
+        </button>
+        <button type="button" class="cadence-btn" data-cadence="weekly">
+          <span>📊</span> Weekly Synthesized Briefing
+        </button>
+      </div>
+    </div>
+
+    <hr class="divider">
+
+    <!-- Email Delivery Subscription Section -->
+    <div class="delivery-section">
+      <h3 class="delivery-section-title">Where should we deliver your regulatory updates?</h3>
+      <p class="delivery-section-sub">We deliver actionable summaries with linked circular diffs and suggested enterprise SOPs.</p>
+
+      <form id="subscribeForm">
+        <div class="email-form-row">
+          <div class="email-input-wrapper">
+            <span class="email-icon">✉</span>
+            <input type="email" id="emailInput" class="email-input" placeholder="Enter your work email address (e.g. compliance@bank.com)" required>
           </div>
-
-          <div class="form-group">
-            <label class="form-label">Regulator Intelligence Preferences</label>
-            <div class="chips-grid" role="group" aria-label="Regulator selection">
-              
-              <div>
-                <input type="checkbox" id="chipRbi" class="chip-checkbox" value="rbi" checked>
-                <label for="chipRbi" class="chip-label">
-                  <span>✓</span> RBI Updates
-                </label>
-              </div>
-
-              <div>
-                <input type="checkbox" id="chipSebi" class="chip-checkbox" value="sebi" checked>
-                <label for="chipSebi" class="chip-label">
-                  <span>✓</span> SEBI Updates
-                </label>
-              </div>
-
-              <div>
-                <input type="checkbox" id="chipSec" class="chip-checkbox" value="sec">
-                <label for="chipSec" class="chip-label">
-                  <span>✓</span> SEC Updates
-                </label>
-              </div>
-
-            </div>
-          </div>
-
-          <button type="submit" class="btn btn-primary" id="btnSendOtp">
-            <span id="btnSendOtpText">Send Verification OTP</span>
-            <span id="btnSendOtpIcon">→</span>
+          <button type="submit" id="btnActivate" class="btn-activate">
+            <span>Activate Personalized Alerts</span>
+            <span>↗</span>
           </button>
-        </form>
-      </section>
+        </div>
+        <div id="emailError" class="error-msg" style="text-align: left;"></div>
+      </form>
 
-      <!-- STEP 2: 4-Box OTP Verification -->
-      <section class="step-pane" id="step2Pane" aria-labelledby="step2Heading">
-        <div class="widget-header">
-          <h2 class="widget-title" id="step2Heading">Security Verification</h2>
-          <p class="widget-subtitle" id="otpSentNotice">Enter the 4-digit verification code sent to your email.</p>
+      <div class="privacy-note">
+        <span class="privacy-icon">🛡️</span>
+        <span>Zero data egress. Your email and preferences remain strictly protected.</span>
+      </div>
+    </div>
+
+    <!-- Matched Directives Briefing Section (Step 3 Output) -->
+    <div class="matched-updates-section" id="matchedSection">
+      <h3 style="font-size: 16px; font-weight: 700; margin-bottom: 16px;">Active Regulatory Directives Briefing</h3>
+      <div id="matchedGrid"></div>
+
+      <!-- Feedback Card -->
+      <div class="feedback-card" id="feedbackCard">
+        <h4 style="font-size: 14px; font-weight: 700;">Would you like to share feedback with the GRIP Team?</h4>
+        <div class="star-rating">
+          <button type="button" class="star-btn active" data-rating="1">★</button>
+          <button type="button" class="star-btn active" data-rating="2">★</button>
+          <button type="button" class="star-btn active" data-rating="3">★</button>
+          <button type="button" class="star-btn active" data-rating="4">★</button>
+          <button type="button" class="star-btn active" data-rating="5">★</button>
+        </div>
+        <textarea id="feedbackMsg" style="width:100%; padding:10px; border:1px solid #cbd5e1; border-radius:6px;" rows="3" placeholder="Share your feedback..."></textarea>
+        <div style="display:flex; gap:10px; margin-top:12px;">
+          <button type="button" id="btnMaybeLater" style="padding:8px 16px; border:1px solid #cbd5e1; background:none; border-radius:6px; cursor:pointer;">Maybe later</button>
+          <button type="button" id="btnSubmitFeedback" style="padding:8px 16px; background:#0f172a; color:#fff; border:none; border-radius:6px; font-weight:700; cursor:pointer;">Submit Feedback</button>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Step 2: OTP Verification Modal Overlay -->
+  <div class="modal-backdrop" id="otpModal">
+    <div class="modal-card">
+      <button type="button" class="modal-close" id="btnCloseModal">&times;</button>
+      <h3 style="font-size: 18px; font-weight: 700; margin-bottom: 6px;">Security Verification</h3>
+      <p style="font-size: 13px; color: var(--text-secondary);" id="otpModalNotice">Enter the 4-digit verification code sent to your email.</p>
+
+      <form id="otpForm">
+        <div class="otp-boxes-container" id="otpBoxesContainer">
+          <input type="text" maxlength="1" inputmode="numeric" pattern="[0-9]*" class="otp-box" id="otpBox0" autocomplete="one-time-code">
+          <input type="text" maxlength="1" inputmode="numeric" pattern="[0-9]*" class="otp-box" id="otpBox1">
+          <input type="text" maxlength="1" inputmode="numeric" pattern="[0-9]*" class="otp-box" id="otpBox2">
+          <input type="text" maxlength="1" inputmode="numeric" pattern="[0-9]*" class="otp-box" id="otpBox3">
         </div>
 
-        <form id="step2Form" novalidate>
-          <!-- 4-Box OTP Input -->
-          <div class="otp-boxes-container" id="otpBoxesContainer">
-            <input type="text" maxlength="1" inputmode="numeric" pattern="[0-9]*" class="otp-box" id="otpBox0" aria-label="OTP Digit 1" autocomplete="one-time-code">
-            <input type="text" maxlength="1" inputmode="numeric" pattern="[0-9]*" class="otp-box" id="otpBox1" aria-label="OTP Digit 2">
-            <input type="text" maxlength="1" inputmode="numeric" pattern="[0-9]*" class="otp-box" id="otpBox2" aria-label="OTP Digit 3">
-            <input type="text" maxlength="1" inputmode="numeric" pattern="[0-9]*" class="otp-box" id="otpBox3" aria-label="OTP Digit 4">
-          </div>
+        <div id="otpError" class="error-msg"></div>
 
-          <div id="otpError" class="error-msg" style="text-align: center;" aria-live="assertive"></div>
-
-          <div class="otp-timer-row">
-            <div>Expires in: <strong id="timerCountdown">05:00</strong></div>
-            <button type="button" id="btnResendOtp" class="resend-btn" disabled>Resend OTP</button>
-          </div>
-
-          <div style="display: flex; gap: 12px; margin-top: 24px;">
-            <button type="button" class="btn btn-secondary" id="btnBackToStep1">Back</button>
-            <button type="submit" class="btn btn-primary" id="btnVerifyOtp" style="flex: 1;">Verify & Activate</button>
-          </div>
-        </form>
-      </section>
-
-      <!-- STEP 3: Success & Matched Updates -->
-      <section class="step-pane" id="step3Pane" aria-labelledby="step3Heading">
-        <div class="success-container">
-          <svg class="checkmark-svg" viewBox="0 0 52 52">
-            <circle class="checkmark-circle" cx="26" cy="26" r="25" />
-            <path class="checkmark-check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8" />
-          </svg>
-          <h2 class="widget-title" id="step3Heading">Identity Verified!</h2>
-          <p class="widget-subtitle">Your GRIP regulatory intelligence feed is now active.</p>
+        <div class="otp-timer-row">
+          <div>Expires in: <strong id="timerCountdown">05:00</strong></div>
+          <button type="button" id="btnResendOtp" class="resend-btn" disabled>Resend OTP</button>
         </div>
 
-        <div style="margin-top: 24px;">
-          <h3 style="font-size: 15px; color: var(--color-teal-bright); text-transform: uppercase; letter-spacing: 1px;">Active Matched Directives</h3>
-          <div class="updates-grid" id="matchedUpdatesGrid">
-            <!-- Rendered dynamically -->
-          </div>
-        </div>
-
-        <!-- Feedback Card -->
-        <div class="feedback-card" id="feedbackCard">
-          <h4 style="font-size: 15px; font-weight: 700; margin-bottom: 4px;">Would you like to share your feedback with the GRIP Team?</h4>
-          <p style="font-size: 13px; color: var(--color-text-muted);">Your insights help refine our regulatory alert engine.</p>
-
-          <form id="feedbackForm">
-            <div class="star-rating" role="radiogroup" aria-label="Star rating score">
-              <button type="button" class="star-btn active" data-rating="1" aria-label="1 star">★</button>
-              <button type="button" class="star-btn active" data-rating="2" aria-label="2 stars">★</button>
-              <button type="button" class="star-btn active" data-rating="3" aria-label="3 stars">★</button>
-              <button type="button" class="star-btn active" data-rating="4" aria-label="4 stars">★</button>
-              <button type="button" class="star-btn active" data-rating="5" aria-label="5 stars">★</button>
-            </div>
-
-            <div class="form-group">
-              <textarea id="feedbackMsg" class="form-textarea" rows="3" placeholder="Share your feedback or feature suggestions..." required></textarea>
-            </div>
-
-            <div style="display: flex; gap: 10px;">
-              <button type="button" class="btn btn-secondary" id="btnMaybeLater">Maybe Later</button>
-              <button type="submit" class="btn btn-primary" id="btnSubmitFeedback">Submit Feedback</button>
-            </div>
-          </form>
-        </div>
-      </section>
-
-    </main>
-
+        <button type="submit" id="btnVerify" style="width:100%; margin-top:20px; padding:12px; background:var(--dark-navy); color:#fff; border:none; border-radius:8px; font-size:14px; font-weight:700; cursor:pointer;">
+          Verify & Activate Alerts
+        </button>
+      </form>
+    </div>
   </div>
 
-  <!-- Toast Container -->
-  <div id="toastContainer" class="toast-container" aria-live="polite"></div>
+  <!-- Toast Notifications Container -->
+  <div id="toastContainer" class="toast-container"></div>
 
   <script src="/app.js"></script>
 </body>
