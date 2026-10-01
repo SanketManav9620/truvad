@@ -1,0 +1,44 @@
+[
+  {
+    "id": "upd_rbi_01",
+    "regulator": "RBI",
+    "severity": "Critical",
+    "title": "Cybersecurity Governance Framework for Digital Payment Ecosystems",
+    "summary": "Mandates real-time anomaly detection, zero-trust API access controls, and mandatory 4-digit OTP step-up authentication for all digital transactions exceeding ₹50,000.",
+    "effectiveDate": "2026-11-01",
+    "impactedEntities": [
+      "Payment System Operators",
+      "Scheduled Commercial Banks",
+      "NBFCs"
+    ],
+    "link": "#"
+  },
+  {
+    "id": "upd_sebi_01",
+    "regulator": "SEBI",
+    "severity": "High",
+    "title": "Enhanced Surveillance and Identity Verification for Algorithmic Trading Desks",
+    "summary": "Requires institutional brokers to implement automated kill-switches, dual-factor cryptographic key authorization, and daily telemetry reporting for high-frequency trading algorithms.",
+    "effectiveDate": "2026-10-15",
+    "impactedEntities": [
+      "Stockbrokers",
+      "Institutional Investors",
+      "Asset Management Companies"
+    ],
+    "link": "#"
+  },
+  {
+    "id": "upd_sec_01",
+    "regulator": "SEC",
+    "severity": "Critical",
+    "title": "Mandatory Cybersecurity Risk Management and Incident Disclosure Protocol",
+    "summary": "Enforces 4-hour public disclosure timelines for material cybersecurity incidents and requires quarterly board-level reviews of third-party vendor risk assessments.",
+    "effectiveDate": "2026-12-01",
+    "impactedEntities": [
+      "Publicly Traded Companies",
+      "Registered Investment Advisers",
+      "Broker-Dealers"
+    ],
+    "link": "#"
+  }
+]

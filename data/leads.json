@@ -1,0 +1,125 @@
+[
+  {
+    "id": "lead_1790879371326_tn8oi",
+    "email": "already.verified.1790879371314@bank.com",
+    "name": "",
+    "company": "",
+    "verified": true,
+    "preferences": {
+      "rbi": true,
+      "sebi": true,
+      "sec": true
+    },
+    "createdAt": "2026-10-01T18:29:31.326Z",
+    "verifiedAt": "2026-10-01T18:29:31.325Z",
+    "updatedAt": "2026-10-01T18:29:31.335Z"
+  },
+  {
+    "id": "lead_1790879371300_w3ti3",
+    "email": "api.test.1790879371291@institution.com",
+    "name": "",
+    "company": "",
+    "verified": true,
+    "preferences": {
+      "rbi": true,
+      "sebi": true,
+      "sec": false
+    },
+    "createdAt": "2026-10-01T18:29:31.300Z",
+    "verifiedAt": "2026-10-01T18:29:31.299Z"
+  },
+  {
+    "id": "lead_1790879155361_3o6lp",
+    "email": "already.verified.1790879155352@bank.com",
+    "name": "",
+    "company": "",
+    "verified": true,
+    "preferences": {
+      "rbi": true,
+      "sebi": true,
+      "sec": true
+    },
+    "createdAt": "2026-10-01T18:25:55.361Z",
+    "verifiedAt": "2026-10-01T18:25:55.361Z",
+    "updatedAt": "2026-10-01T18:25:55.370Z"
+  },
+  {
+    "id": "lead_1790879155337_ukk8l",
+    "email": "api.test.1790879155329@institution.com",
+    "name": "",
+    "company": "",
+    "verified": true,
+    "preferences": {
+      "rbi": true,
+      "sebi": true,
+      "sec": false
+    },
+    "createdAt": "2026-10-01T18:25:55.337Z",
+    "verifiedAt": "2026-10-01T18:25:55.337Z"
+  },
+  {
+    "id": "lead_1790879155294_dxv02",
+    "email": "storage.user1@bank.com",
+    "name": "",
+    "company": "",
+    "verified": true,
+    "preferences": {
+      "rbi": true,
+      "sebi": true,
+      "sec": true
+    },
+    "createdAt": "2026-10-01T18:25:55.294Z",
+    "verifiedAt": "2026-10-01T18:25:55.294Z",
+    "updatedAt": "2026-10-01T18:29:31.257Z"
+  },
+  {
+    "id": "lead_1790879052439_f1bvg",
+    "email": "already.verified@bank.com",
+    "name": "",
+    "company": "",
+    "verified": true,
+    "preferences": {
+      "rbi": false,
+      "sebi": true,
+      "sec": true
+    },
+    "createdAt": "2026-10-01T18:24:12.439Z",
+    "verifiedAt": "2026-10-01T18:24:12.439Z",
+    "updatedAt": "2026-10-01T18:24:12.447Z"
+  },
+  {
+    "id": "lead_1790878553198_nyup0",
+    "email": "compliance.officer@bank.com",
+    "name": "",
+    "company": "",
+    "verified": true,
+    "preferences": {
+      "rbi": true,
+      "sebi": true,
+      "sec": false
+    },
+    "createdAt": "2026-10-01T18:15:53.198Z",
+    "verifiedAt": "2026-10-01T18:15:53.198Z"
+  },
+  {
+    "id": "lead_1790877588617_cmkwd",
+    "email": "test.user@example.com",
+    "name": "",
+    "company": "",
+    "verified": true,
+    "preferences": {
+      "rbi": true,
+      "sebi": true,
+      "sec": true
+    },
+    "createdAt": "2026-10-01T17:59:48.617Z",
+    "verifiedAt": "2026-10-01T17:59:48.617Z"
+  },
+  {
+    "id": "lead_1790877436671_smqr0",
+    "email": "test@example.com",
+    "name": "Alice Johnson",
+    "company": "Acme Inc",
+    "createdAt": "2026-10-01T17:57:16.671Z"
+  }
+]

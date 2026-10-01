@@ -1,0 +1,57 @@
+[
+  {
+    "id": "fb_1790879371309_2xy9s",
+    "email": "api.test.1790879371291@institution.com",
+    "rating": 5,
+    "category": "General",
+    "message": "Excellent platform and verification flow!",
+    "createdAt": "2026-10-01T18:29:31.309Z"
+  },
+  {
+    "id": "fb_1790879371263_coe5u",
+    "email": "storage.user1@bank.com",
+    "rating": 5,
+    "category": "Feature Request",
+    "message": "Test storage feedback message",
+    "createdAt": "2026-10-01T18:29:31.263Z"
+  },
+  {
+    "id": "fb_1790879155346_360dr",
+    "email": "api.test.1790879155329@institution.com",
+    "rating": 5,
+    "category": "General",
+    "message": "Excellent platform and verification flow!",
+    "createdAt": "2026-10-01T18:25:55.346Z"
+  },
+  {
+    "id": "fb_1790879155308_kedop",
+    "email": "storage.user1@bank.com",
+    "rating": 5,
+    "category": "Feature Request",
+    "message": "Test storage feedback message",
+    "createdAt": "2026-10-01T18:25:55.308Z"
+  },
+  {
+    "id": "fb_1790878553206_b3xwb",
+    "email": "compliance.officer@bank.com",
+    "rating": 5,
+    "category": "General",
+    "message": "Verified lead feedback test success!",
+    "createdAt": "2026-10-01T18:15:53.206Z"
+  },
+  {
+    "id": "fb_1790877588625_tf86t",
+    "email": "test.user@example.com",
+    "rating": 5,
+    "category": "General",
+    "message": "Atomic write test success",
+    "createdAt": "2026-10-01T17:59:48.625Z"
+  },
+  {
+    "id": "fb_1790877455208_rih27",
+    "email": "feedback@user.com",
+    "category": "UX Design",
+    "message": "Love the zero-dependency architecture!",
+    "createdAt": "2026-10-01T17:57:35.208Z"
+  }
+]

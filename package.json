@@ -1,0 +1,21 @@
+{
+  "name": "grip-alert-widget",
+  "version": "1.0.0",
+  "description": "Zero-dependency Grip Alert Widget server & frontend using Node.js built-in modules.",
+  "type": "module",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "test": "node --test"
+  },
+  "keywords": [
+    "grip",
+    "alert",
+    "widget",
+    "otp",
+    "zero-dependency",
+    "nodejs"
+  ],
+  "author": "",
+  "license": "MIT"
+}

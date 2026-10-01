@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GRIP by Truvad - Personalized Regulatory Intelligence</title>
+  <meta name="description" content="Get personalized regulatory updates for RBI, SEBI, and SEC with zero-dependency authentication.">
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+
+  <div class="container">
+    
+    <!-- Header Banner -->
+    <header class="header-banner">
+      <div>
+        <h1 class="brand-title">GRIP <span style="font-weight: 400; font-size: 16px; color: var(--color-teal-bright);">by Truvad</span></h1>
+        <p class="brand-sub">Enterprise Regulatory Intelligence Platform</p>
+      </div>
+      <div class="status-badge" id="systemStatus">
+        <span class="badge-dot"></span>
+        <span id="statusText">System Active</span>
+      </div>
+    </header>
+
+    <!-- Main Widget Container -->
+    <main class="widget-card" id="widgetCard">
+      
+      <!-- Mock Mode Info Banner -->
+      <div id="mockModeBanner" class="mock-mode-banner" style="display: none;" role="note">
+        <span>ℹ️</span>
+        <span><strong>Mock Mode Active:</strong> RESEND_API_KEY is not set. Verification OTPs are printed directly to the server terminal console and saved in <code>/outbox/</code>.</span>
+      </div>
+      
+      <!-- STEP 1: Email & Preferences -->
+      <section class="step-pane active" id="step1Pane" aria-labelledby="step1Heading">
+        <div class="widget-header">
+          <h2 class="widget-title" id="step1Heading">Get Personalized Regulatory Updates</h2>
+          <p class="widget-subtitle">Subscribe to real-time compliance directives for RBI, SEBI, and SEC.</p>
+        </div>
+
+        <form id="step1Form" novalidate>
+          <div class="form-group">
+            <label class="form-label" for="emailInput">Work Email Address</label>
+            <input type="email" id="emailInput" class="form-input" placeholder="e.g. officer@institution.com" required aria-required="true" aria-describedby="emailError" autocomplete="email">
+            <div id="emailError" class="error-msg" aria-live="polite"></div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Regulator Intelligence Preferences</label>
+            <div class="chips-grid" role="group" aria-label="Regulator selection">
+              
+              <div>
+                <input type="checkbox" id="chipRbi" class="chip-checkbox" value="rbi" checked>
+                <label for="chipRbi" class="chip-label">
+                  <span>✓</span> RBI Updates
+                </label>
+              </div>
+
+              <div>
+                <input type="checkbox" id="chipSebi" class="chip-checkbox" value="sebi" checked>
+                <label for="chipSebi" class="chip-label">
+                  <span>✓</span> SEBI Updates
+                </label>
+              </div>
+
+              <div>
+                <input type="checkbox" id="chipSec" class="chip-checkbox" value="sec">
+                <label for="chipSec" class="chip-label">
+                  <span>✓</span> SEC Updates
+                </label>
+              </div>
+
+            </div>
+          </div>
+
+          <button type="submit" class="btn btn-primary" id="btnSendOtp">
+            <span id="btnSendOtpText">Send Verification OTP</span>
+            <span id="btnSendOtpIcon">→</span>
+          </button>
+        </form>
+      </section>
+
+      <!-- STEP 2: 4-Box OTP Verification -->
+      <section class="step-pane" id="step2Pane" aria-labelledby="step2Heading">
+        <div class="widget-header">
+          <h2 class="widget-title" id="step2Heading">Security Verification</h2>
+          <p class="widget-subtitle" id="otpSentNotice">Enter the 4-digit verification code sent to your email.</p>
+        </div>
+
+        <form id="step2Form" novalidate>
+          <!-- 4-Box OTP Input -->
+          <div class="otp-boxes-container" id="otpBoxesContainer">
+            <input type="text" maxlength="1" inputmode="numeric" pattern="[0-9]*" class="otp-box" id="otpBox0" aria-label="OTP Digit 1" autocomplete="one-time-code">
+            <input type="text" maxlength="1" inputmode="numeric" pattern="[0-9]*" class="otp-box" id="otpBox1" aria-label="OTP Digit 2">
+            <input type="text" maxlength="1" inputmode="numeric" pattern="[0-9]*" class="otp-box" id="otpBox2" aria-label="OTP Digit 3">
+            <input type="text" maxlength="1" inputmode="numeric" pattern="[0-9]*" class="otp-box" id="otpBox3" aria-label="OTP Digit 4">
+          </div>
+
+          <div id="otpError" class="error-msg" style="text-align: center;" aria-live="assertive"></div>
+
+          <div class="otp-timer-row">
+            <div>Expires in: <strong id="timerCountdown">05:00</strong></div>
+            <button type="button" id="btnResendOtp" class="resend-btn" disabled>Resend OTP</button>
+          </div>
+
+          <div style="display: flex; gap: 12px; margin-top: 24px;">
+            <button type="button" class="btn btn-secondary" id="btnBackToStep1">Back</button>
+            <button type="submit" class="btn btn-primary" id="btnVerifyOtp" style="flex: 1;">Verify & Activate</button>
+          </div>
+        </form>
+      </section>
+
+      <!-- STEP 3: Success & Matched Updates -->
+      <section class="step-pane" id="step3Pane" aria-labelledby="step3Heading">
+        <div class="success-container">
+          <svg class="checkmark-svg" viewBox="0 0 52 52">
+            <circle class="checkmark-circle" cx="26" cy="26" r="25" />
+            <path class="checkmark-check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8" />
+          </svg>
+          <h2 class="widget-title" id="step3Heading">Identity Verified!</h2>
+          <p class="widget-subtitle">Your GRIP regulatory intelligence feed is now active.</p>
+        </div>
+
+        <div style="margin-top: 24px;">
+          <h3 style="font-size: 15px; color: var(--color-teal-bright); text-transform: uppercase; letter-spacing: 1px;">Active Matched Directives</h3>
+          <div class="updates-grid" id="matchedUpdatesGrid">
+            <!-- Rendered dynamically -->
+          </div>
+        </div>
+
+        <!-- Feedback Card -->
+        <div class="feedback-card" id="feedbackCard">
+          <h4 style="font-size: 15px; font-weight: 700; margin-bottom: 4px;">Would you like to share your feedback with the GRIP Team?</h4>
+          <p style="font-size: 13px; color: var(--color-text-muted);">Your insights help refine our regulatory alert engine.</p>
+
+          <form id="feedbackForm">
+            <div class="star-rating" role="radiogroup" aria-label="Star rating score">
+              <button type="button" class="star-btn active" data-rating="1" aria-label="1 star">★</button>
+              <button type="button" class="star-btn active" data-rating="2" aria-label="2 stars">★</button>
+              <button type="button" class="star-btn active" data-rating="3" aria-label="3 stars">★</button>
+              <button type="button" class="star-btn active" data-rating="4" aria-label="4 stars">★</button>
+              <button type="button" class="star-btn active" data-rating="5" aria-label="5 stars">★</button>
+            </div>
+
+            <div class="form-group">
+              <textarea id="feedbackMsg" class="form-textarea" rows="3" placeholder="Share your feedback or feature suggestions..." required></textarea>
+            </div>
+
+            <div style="display: flex; gap: 10px;">
+              <button type="button" class="btn btn-secondary" id="btnMaybeLater">Maybe Later</button>
+              <button type="submit" class="btn btn-primary" id="btnSubmitFeedback">Submit Feedback</button>
+            </div>
+          </form>
+        </div>
+      </section>
+
+    </main>
+
+  </div>
+
+  <!-- Toast Container -->
+  <div id="toastContainer" class="toast-container" aria-live="polite"></div>
+
+  <script src="/app.js"></script>
+</body>
+</html>
